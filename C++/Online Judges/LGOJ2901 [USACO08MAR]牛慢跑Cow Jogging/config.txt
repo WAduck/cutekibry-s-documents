@@ -1,0 +1,6 @@
+{
+'name':'[USACO08MAR]牛慢跑Cow Jogging',
+'id':'LGOJ2901',
+'tag': ['K短路'],
+'diff': '省选/NOI-',
+}

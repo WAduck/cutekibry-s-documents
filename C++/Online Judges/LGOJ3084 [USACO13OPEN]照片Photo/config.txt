@@ -1,0 +1,6 @@
+{
+'name':'[USACO13OPEN]照片Photo',
+'id':'LGOJ3084',
+'tag':['差分约束系统', '负环', '单调DP', 'DP'],
+'diff':'省选/NOI-',
+}

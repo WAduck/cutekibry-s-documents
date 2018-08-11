@@ -1,0 +1,6 @@
+{
+'name':'[USACO13DEC]最优挤奶Optimal Milking',
+'id':'LGOJ3097',
+'tag':['线段树'],
+'diff':'提高+/省选-',
+}

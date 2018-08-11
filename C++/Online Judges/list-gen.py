@@ -6,19 +6,19 @@ try:
     import colorama
     colorama.init(autoreset=True)
     def raise_warning(message):
-        print(colorama.Fore.YELLOW + 'Warning: ' + message)
+        print(colorama.Fore.YELLOW + '警告：' + message)
 except ModuleNotFoundError:
     def raise_warning(message):
-        print('Warning: ' + message)
+        print('警告：' + message)
 
 root = Path()
 problem_list = list()
 for dir in root.iterdir():
     if dir.is_dir():
-        print('Processing folder \'{}\'...'.format(dir))
+        print('处理文件夹 \'{}\'...'.format(dir))
         config = [file for file in list(dir.iterdir()) if file.name == 'config.txt']
         if not config:
-            raise_warning('Folder \'{}\' does not content config.txt. Skip processing.'.format(dir))
+            raise_warning('文件夹 \'{}\' 不含有 config.txt 。跳过处理。'.format(dir))
             continue
         config = config[0]
         file = open(config, 'r', encoding='utf-8')
@@ -30,12 +30,12 @@ for dir in root.iterdir():
             if type(params) != type(dict()):
                 raise TypeError
             params['diff'] = params.get('diff', '无diff参数')
-            params['tag'] = params.get('tag', '无tag参数')
+            params['tag'] = sorted([x.upper() for x in params.get('tag', ['无tag参数'])])
             problem_list.append(params)
         # except TypeError:
         #     raise_warning('\'{}\' contents {} instead of {}. Skip processing.'.format(config, type(params), type(dict())))
         except Exception as e:
-            raise_warning('An exception was raised while processing \'{}\':\n{}\nSkip processing.'.format(config, e))
+            raise_warning('在处理 \'{}\' 时发生了一个错误：\n{}\n跳过处理。'.format(config, e))
 problem_list.sort(key=lambda x: x['id'])
 with open('list.txt', 'w', encoding='utf-8') as output:
     try:

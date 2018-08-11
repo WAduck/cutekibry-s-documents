@@ -1,0 +1,6 @@
+{
+'name':'Number Triangles',
+'id':'USACO Section 1.6 A',
+'tag':['dp'],
+'diff':'普及-',
+}

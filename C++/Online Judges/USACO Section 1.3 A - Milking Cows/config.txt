@@ -1,0 +1,6 @@
+{
+'name':'Milking Cows',
+'id':'USACO Section 1.3 A',
+'tag':['排序'],
+'diff':'普及-',
+}

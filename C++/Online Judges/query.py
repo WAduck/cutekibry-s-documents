@@ -5,7 +5,7 @@ import os
 with open('autorun.py', 'r', encoding='utf-8') as f:
     exec(''.join(f.readlines()))
 
-SPLIT = '-'*64
+SPLIT = '-'*80
 
 def strwidth(s):
     res = 0
@@ -34,28 +34,39 @@ def diffrank(s):
     else:
         return -1
 
+def getoj(s):
+    for pattern in ['BZOJ', 'LGOJ', 'USACO', 'SPOJ', 'POJ']:
+        if s.find(pattern) != -1:
+            return pattern
+    return 'UNKNOWN'
+
 try:
     import colorama
     colorama.init(autoreset=True)
     def raise_warning(message):
-        print(colorama.Fore.YELLOW + 'Warning: ' + message)
+        print(colorama.Fore.YELLOW + '警告：' + message)
     def raise_error(message):
-        print(colorama.Fore.RED + 'Error: ' + message)
-    diff_color = {
+        print(colorama.Fore.RED + '错误：' + message)
+    color = {
+        't-LGOJ': colorama.Fore.LIGHTBLUE_EX,
+        't-USACO': colorama.Fore.LIGHTGREEN_EX,
+        't-white': colorama.Fore.WHITE,
         'bright': colorama.Style.BRIGHT,
-        'reset': colorama.Back.RESET + colorama.Style.NORMAL,
-        '入门难度': colorama.Back.RED,
-        '普及-': colorama.Back.YELLOW,
-        '普及/提高-': colorama.Back.LIGHTYELLOW_EX,
-        '普及+/提高': colorama.Back.GREEN,
-        '提高+/省选-': colorama.Back.LIGHTBLUE_EX,
-        '省选/NOI-': colorama.Back.MAGENTA,
-        'NOI/NOI+/CTSC': colorama.Back.BLUE,
+        'reset': colorama.Back.RESET + colorama.Fore.RESET + colorama.Style.NORMAL,
+        'bg-入门难度': colorama.Back.RED,
+        'bg-普及-': colorama.Back.YELLOW,
+        'bg-普及/提高-': colorama.Back.LIGHTYELLOW_EX,
+        'bg-普及+/提高': colorama.Back.GREEN,
+        'bg-提高+/省选-': colorama.Back.LIGHTBLUE_EX,
+        'bg-省选/NOI-': colorama.Back.MAGENTA,
+        'bg-NOI/NOI+/CTSC': colorama.Back.BLUE,
     }
 except ModuleNotFoundError:
-    diff_color = dict()
+    color = dict()
     def raise_warning(message):
-        print('Warning: ' + message)
+        print('警告：' + message)
+    def raise_error(message):
+        print('错误：' + message)
 
 try:
     from functools import cmp_to_key
@@ -84,95 +95,111 @@ except ModuleNotFoundError:
 try:
     file = open('list.txt')
     problem_list = eval(''.join(file.readlines()))
-    print('Read and execute \'list.txt\' successfully.')
+    print('成功读取并处理 \'list.txt\' 。')
 
 except FileNotFoundError:
-    raise RuntimeError('\'list.txt\' does not exist, please generate it through \'list-gen.py\'')
+    raise RuntimeError('\'list.txt\' 不存在，请运行 \'list-gen.py\' 或手动生成 \'list.txt\' 。')
 
 def showhelp():
-    print('Welcome to query system!')
-    print('You can query or sort the problems through input python3 functions.')
-    print('Available variables:')
-    print('\t- {:30}{:30}{:30}'.format('Name', 'Type', 'Description'))
-    print('\t- {:30}{:30}{:30}'.format('id', str(type(str())), 'Id of the problem (including OJ\'s name)'))
-    print('\t- {:30}{:30}{:30}'.format('name', str(type(str())), 'Name of the problem'))
-    print('\t- {:30}{:30}{:30}'.format('diff', str(type(list())), 'Difficulty of the problem'))
-    print('\t- {:30}{:30}{:30}'.format('tag', str(type(str())), 'List of tags of the problem'))
+    print("""
+--------------------------------
+# 欢迎来到查询系统！
+--------------------------------
+你可以通过输入 python3 函数来查询或排序题目。
+可用参数：
+名字              类型                描述
+id                <class 'str'>       题目编号（包括OJ名）
+name              <class 'str'>       题目名字
+diff              <class 'str'>       题目难度
+tag               <class 'list'>      题目标签列表
 
-    print(SPLIT)
-    print('Query')
-    print(SPLIT)
-    print('To query problems, please input \'query\', then input a python3 function which returns a bool value.')
-    print('Examples:')
-    print('\t- {:40}{:40}'.format('name == \'LGOJ P1073 最优贸易\'', 'Query problems with name == \'LGOJ P1073 最优贸易\''))
-    print('\t- {:40}{:40}'.format('diff == \'提高+/省选-\'', 'Query problems with difficulty == \'提高+/省选-\''))
-    print('\t- {:40}{:40}'.format('find(name, \'LGOJ P1073 最优贸易\') == -1', 'Query problems without substring \'LGOJ P1073 最优贸易\' in name'))
-    print('\t- {:41}{:40}'.format('tag.count(\'最短路\')', 'Query problems with tag \'最短路\''))
-    print()
 
-    print(SPLIT)
-    print('Sort')
-    print(SPLIT)
-    print('To sort the problem list, please input \'sort\', then input a python3 function which returns a bool value.')
-    print('Examples:')
-    print('\t- {:40}{:40}'.format('-1 if id1 < id2 else 1', 'Sort the problem list by id (ascending)'))
-    print('\t- {:40}{:40}'.format('-1 if len(tag1) > len(tag2) else 1', 'Sort the problem list by the length of tag list (descending)'))
-    print()
+--------------------------------
+# 查询
+--------------------------------
+要查询符合条件的题目，请输入 'query' ，然后输入一个 python3 的表达式。
+例：
+name == '最优贸易'                    查询名字为'最优贸易'的题目
+diff == '提高+/省选-'                 查询难度为'提高+/省选-'的题目
+find(name, '最') == -1                查询名字中不含有'最'字串的题目
+tag.count('最短路')                   查询含有'最短路'标签的题目'
 
-    print(SPLIT)
-    print('strwidth()')
-    print(SPLIT)
-    print('strwidth(s) will return the width of the string s.')
-    print('Examples:')
-    print('strwidth(\'153\')=3')
-    print('strwidth(\'数字\')=4')
-    print('strwidth(\'一二三12345\')=11')
-    print()
 
-    print(SPLIT)
-    print('diffrank()')
-    print(SPLIT)
-    print('diffrank(s) will return the rank of the difficulty s.')
-    print('0~6 for \'入门难度\'...\'NOI/NOI+/CTSC\', and -1 for others.')
-    print('Examples:')
-    print('strwidth(\'入门难度\')=0')
-    print('strwidth(\'普及-\')=1')
-    print('strwidth(\'普及+/提高\')=3')
-    print()
+--------------------------------
+# 排序
+--------------------------------
+要排序题目列表，请输入 'sort' ，然后输入一个 python3 的表达式。
+例：
+-1 if id1 < id2 else 1                将题目列表按编号递增的顺序排序
+-1 if len(tag1) > len(tag2) else 1    将题目列表按标签数量递减的顺序排序
 
-    print(SPLIT)
-    print('Options')
-    print(SPLIT)
-    print('\t- {:40}{:40}'.format('help', 'Show help'))
-    print('\t- {:40}{:40}'.format('query', 'Query problems'))
-    print('\t- {:40}{:40}'.format('sort', 'Sort the problem list'))
-    print()
 
-    print(SPLIT)
-    print('Others')
-    print(SPLIT)
-    print('Warning: This system does not block codes like \'help()\' and some dangerous functions.')
-    print('Please pay attention while using it.')
-    print()
+--------------------------------
+# strwidth()
+--------------------------------
+strwidth(s) 返回字符串 s 的长度。
+例：
+strwidth('153')=3
+strwidth('数字')=4
+strwidth('一二三12345')=11
+
+
+--------------------------------
+# diffrank()
+--------------------------------
+diffrank(s) 返回字符串 s 的难度评级。
+'入门难度'...'NOI/NOI+/CTSC' 为 0..6 ，其他为 -1 。
+例：
+strwidth('入门难度')=0
+strwidth('普及-')=1
+strwidth('普及+/提高')=3
+
+
+--------------------------------
+# getoj()
+--------------------------------
+getoj(s) 返回字符串 s 的 OJ 名。
+支持的 OJ ： LGOJ, SPOJ, POJ, BZOJ, USACO
+若找不到，返回 "UNKNOWN"
+例：
+getoj('LGOJ1038')='LGOJ'
+getoj('USACO Section 1.2 A')='USACO'
+getoj('BZOJ1001')='BZOJ'
+
+
+--------------------------------
+# 指令
+--------------------------------
+help                                  显示帮助
+query                                 查询符合条件的题目
+sort                                  排序题目列表
+
+
+--------------------------------
+# 其他
+--------------------------------
+警告：此程序不会阻挡 help() 或其他危险函数的使用。
+请在使用时多加注意。
+""".strip())
 
 showhelp()
 
 while True:
     try:
-        read = input('>> ').strip()
+        read = input('>>> ').strip()
         if read == 'exit':
             exit()
         elif read == 'query':
-            read = input('Input function: ').strip()
+            read = input('... ').strip()
             exec(
 '''
-def func(name, diff, tag):
+def func(id, name, diff, tag):
     return {}
 '''
 .strip().format(read))
-            problems = [problem for problem in problem_list if func(problem['name'], problem['diff'], problem['tag'])]
-            print('Query successfully and return with {} result(s):'.format(len(problems)))
-            problems.insert(0, {'name':'name', 'diff':'diff', 'tag':'tag', 'id':'id'})
+            problems = [problem for problem in problem_list if func(problem['id'], problem['name'], problem['diff'], problem['tag'])]
+            print('成功查询并返回 {} 个结果:'.format(len(problems)))
+            problems.insert(0, {'name':'题目名', 'diff':'难度', 'tag':['标签'], 'id':'编号'})
             idlen = 0
             namelen = 0
             difflen = 0
@@ -181,20 +208,18 @@ def func(name, diff, tag):
                 namelen = max(namelen, strwidth(problem['name']))
                 difflen = max(difflen, strwidth(problem['diff']))
             for problem in problems:
-                print('{i}{_is}{n}{ns}{dcol}{d}{clr}{ds}{t}'.format(
-                    i=problem['id'],
+                print('{i}{_is}{n}{ns}{d}{ds}{t}'.format(
+                    i=color.get('t-'+getoj(problem['id']), '') + problem['id'] + color.get('reset', ''),
                     _is=(idlen-strwidth(problem['id'])+2)*' ',
                     n=problem['name'],
                     ns=(namelen-strwidth(problem['name'])+2)*' ',
-                    d=problem['diff'],
-                    dcol=diff_color.get(problem['diff'], '')+diff_color.get('bright', ''),
+                    d=color.get('t-white', '') + color.get('bg-'+problem['diff'], '') + color.get('bright', '') + problem['diff'] + color.get('reset', ''),
                     ds=(difflen-strwidth(problem['diff'])+2)*' ',
-                    clr=diff_color.get('reset', ''),
-                    t=str(problem['tag']),
+                    t=', '.join(problem['tag']),
                     ))
             exec('del func')
         elif read == 'sort':
-            read = input('Input function: ').strip()
+            read = input('... ').strip()
             exec(
 '''
 def func(x, y):
@@ -214,7 +239,7 @@ def func(x, y):
         elif read == 'help':
             showhelp()
         else:
-            raise_error('Unknown command \'{}\''.format(read))
+            raise_error('未知指令 \'{}\''.format(read))
     except Exception as e:
         raise e
         # raise_error(str(e))

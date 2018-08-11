@@ -1,0 +1,6 @@
+{
+'name':'Mother\'s Milk',
+'id':'USACO Section 1.5 B',
+'tag':['bfs'],
+'diff':'普及/提高-',
+}

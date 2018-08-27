@@ -1,0 +1,6 @@
+{
+'name':'A Game',
+'id':'USACO Section 3.3 E',
+'tag':['DP'],
+'diff':'普及+/提高',
+}

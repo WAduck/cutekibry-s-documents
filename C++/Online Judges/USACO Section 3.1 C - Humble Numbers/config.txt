@@ -1,0 +1,6 @@
+{
+'name':'Humble Numbers',
+'id':'USACO Section 3.1 C',
+'tag':['堆'],
+'diff':'普及/提高-',
+}

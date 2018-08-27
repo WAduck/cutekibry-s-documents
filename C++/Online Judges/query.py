@@ -241,5 +241,5 @@ def func(x, y):
         else:
             raise_error('未知指令 \'{}\''.format(read))
     except Exception as e:
-        raise e
+        raise_error(str(e))
         # raise_error(str(e))

@@ -1,0 +1,6 @@
+{
+'name':'Cow Pedigrees',
+'id':'USACO Section 2.3 B',
+'tag':['DP'],
+'diff':'提高+/省选-',
+}

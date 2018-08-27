@@ -1,0 +1,6 @@
+{
+'name':'Runaround Numbers',
+'id':'USACO Section 2.2 C',
+'tag':['模拟'],
+'diff':'普及/提高-',
+}

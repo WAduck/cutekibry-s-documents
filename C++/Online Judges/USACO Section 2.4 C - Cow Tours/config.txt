@@ -1,0 +1,6 @@
+{
+'name':'Cow Tours',
+'id':'USACO Section 2.4 C',
+'tag':['floyd', '最短路'],
+'diff':'提高+/省选-',
+}

@@ -1,0 +1,207 @@
+
+<!-- saved from url=(0055)http://train.usaco.org/usacotext2?a=42vWdGyhiq2&S=grade -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>提交解决方案 Submitting Solutions
+</title>
+</head><body bgcolor="#f0f0f0">
+<font face="Verdana,Tahoma,sans-serif,Arial,Lucida Sans,Gill Sans">
+<div style="width:45em;background-color:white;border-style:solid;border-width:1px;padding:1em;">
+<table cellspacing="8">
+   <tbody><tr><td><img src="./cowhead2.gif"></td>
+       <td>&nbsp;&nbsp;&nbsp;</td>
+       <td><b><font size="5">
+	<font face="Verdana,Tahoma,sans-serif,Arial,Lucida Sans,Gill Sans">
+	提交解决方案 <br /> Submitting Solutions
+</font></font></b></td>
+   </tr>
+</tbody></table>
+
+<p>USACO训练程序为您的作业提供了一个自动评测系统。您提交您的程序到问题页；它们被编译并评测；结果反馈给您——全都在数秒时间内完成。
+
+</p><p>C/C++/C++11，PASCAL，Python，以及Java都是可用的语言。该系统使用GNU GCC编译器处理C/C++/C++11程序，用Free Pascal系统处理Pascal程序。Python的版本是2.7。Java编译器则是Oracle的最近发行版本。
+
+</p><p>评测系统使用的编译器都是在IOI中规定使用的。
+
+</p><p>这些新的编译器使用32位int；Borland编译器使用16位int。别因为这个而造成不必要的麻烦！
+
+</p><p>在网上，您可以通过输入源代码的文件名到题目底部的“提交文件：”（'Submit a file:'）方框……
+
+</p><p>程序提交需要一个简单的<b>头部注释</b>（Header comments）：您的ID（即您的USACO登录名），程序的名称（将会在每个题目页给出），以及使用的语言。参见下面的例子以更好地理解。
+
+</p><p>每个训练题都有输入和输出。目前，输入包含在一份名为“probname.in”的文件（例如，如果题目名为“ride”，则输入文件名为“ride.in”）。输出必须写入一份名为“probname.out”的文件（也就是说，在“ride”题目中是“ride.out”）。
+
+</p><hr>
+<h2>第一个挑战</h2>
+
+<p>最简单的编程挑战名为“test”，需要您从文件“test.in”的一行中读入一对较小的整数，输出它们的和到文件"test.out"。
+
+</p><p>下面是一个C语言的解决方案。注意使用“exit (0);”可以正确地退出程序的运行。
+</p><pre>/*
+ID: 在这里写上您的ID
+LANG: C
+TASK: test
+*/
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+void
+main () {
+    FILE *fin  = fopen ("test.in", "r");
+    FILE *fout = fopen ("test.out", "w");
+    int a, b;
+    fscanf (fin, "%d %d", &amp;a, &amp;b);      /* 输入的两个整数 */
+    fprintf (fout, "%d\n", a+b);
+    exit (0);
+}
+</pre>
+
+<p>下面是一个C++语言的解决方案。注意使用“exit (0);”可以正确地退出程序的运行。
+</p><pre>/* 使用斜杠+星号风格的注释，否则系统不会发现您的头部信息 */
+/*
+ID: 在这里写上您的ID
+TASK: test
+LANG: C++
+*/
+/* 对于更近的发行版本，LANG可以是C++11或C++14 */
+#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;string&gt;
+
+using namespace std;
+
+int main() {
+    ofstream fout ("test.out");
+    ifstream fin ("test.in");
+    int a, b;
+    fin &gt;&gt; a &gt;&gt; b;
+    fout &lt;&lt; a+b &lt;&lt; endl;
+    return 0;
+}
+</pre>
+
+<p>下面是一个PASCAL语言的解决方案：
+</p><pre>{
+ID: 在这里写上您的ID
+TASK: test
+LANG: PASCAL
+}
+Program Test;
+Var fin, fout: text;
+    a, b: word;
+Begin
+    Assign(fin, 'test.in'); Reset(fin);
+    Assign(fout, 'test.out'); Rewrite(fout);
+    Readln(fin, a, b);
+    Writeln(fout, a+b);
+    Close(fout);
+End.
+</pre>
+
+<p>下面是一个Python语言的解决方案。Python 2和Python 3都是可用的；如果有需要可以注明您使用PYTHON2还是PYTHON3语言。注意：
+</p><ul>
+<li>头部靠左并用<tt>"""</tt>包围。</li>
+<li>把您个人的USACO训练ID放在ID字段。</li>
+<li>Python名称必须全部使用大写字母：PYTHON2或PYTHON3。</li>
+<li>TASK名称根据您提交的题目不同而有改变；这个题目为“test”。</li>
+<li>复制粘贴下面的代码到一个文件里，并提交它作为测试。</li>
+<li>为了打印调试输出（To print debug output），添加“<tt>import sys</tt>”到ID头部下然后使用<tt>sys.stderr.write('message')</tt>。如果你的程序输出是错的，这些信息将会显示给您。
+</li></ul>
+<pre>"""
+ID: 在这里写上您的ID
+LANG: PYTHON2
+TASK: test
+"""
+fin = open ('test.in', 'r')
+fout = open ('test.out', 'w')
+x,y = map(int, fin.readline().split())
+sum = x+y
+fout.write (str(sum) + '\n')
+fout.close()
+</pre>
+
+<p>仍然是同样的问题，不过这次是JAVA。
+</p><pre>/* 使用斜杠+星号风格的注释，否则系统不会发现您的头部信息 */
+/*
+ID: 在这里写上您的ID
+LANG: JAVA
+TASK: test
+*/
+import java.io.*;
+import java.util.*;
+
+class test {
+  public static void main (String [] args) throws IOException {
+    // 用BufferedReader比RandomAccessFile更好；它快多了
+    BufferedReader f = new BufferedReader(new FileReader("test.in"));
+                                                  // 输入文件在上面
+    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("test.out")));
+    // StringTokenize vs. readLine/split——快多了
+    StringTokenizer st = new StringTokenizer(f.readLine());
+						  // 读入整行并转换成token
+    int i1 = Integer.parseInt(st.nextToken());    // 第一个整数
+    int i2 = Integer.parseInt(st.nextToken());    // 第二个整数
+    out.println(i1+i2);                           // 输出结果
+    out.close();                                  // 关闭输出文件
+  }
+}
+</pre>
+<b>重要提示：BufferedReader和StringTokenizer比其他读入方式远远有效得多。它们可以对您程序的效率造成巨大的影响！使用它们！</b>
+
+<hr>
+
+<p>只要您想，您可以尝试许多不同的东西（依据下面的告示）来看看这个评测系统是如何工作的。不过，从理论上说，你不能破坏它或使其崩溃。如果您发现了一个问题，请告诉我。
+
+</p><p>限制很少：
+</p><ul>
+<li>除非特别标示，运行时间限制为一秒（程序在现代化的处理器上运行但<b>时间会缩放到700MHz奔腾III的标准</b>)</li>
+<li>约16MB的数据限制</li>
+<li>约1MB的堆栈限制</li>
+<li>确保您的程序返回值为0</li>
+<li>确保您打印了整行（<b>带文末换行</b>），而不仅仅是几个单词或数字</li>
+<li>请勿使用指定输入、输出和辅助文件以外的其他文件</li>
+<li>其他不必列出的常识规则</li>
+</ul>
+
+<p>规则很简单：
+</p><ul>
+<li>不要试图作弊。</li>
+<li><b>不要只是打印答案</b>，你必须在程序中通过计算得到结果。如果你只是打印答案，你的登录ID可能会被删除。</li>
+<li>不要试图查看系统上的其他文件或使用其他方法来破坏安保系统</li>
+<li>不要试图破坏隐私的常识规则</li>
+<li>请立刻向我报告异常行为（<a href="mailto:rob.kolstad@gmail.com">&lt;rob.kolstad@gmail.com&gt;</a>）</li>
+<li>尽可能享受编程的乐趣</li>
+<li>赢得IOI和其他异国情调的比赛之旅！</li>
+</ul>
+
+<p>一些提示：
+</p><ul>
+<li>stderr和stdout都会在发生错误时显示给您</li>
+<li>随意提问并发表评论</li>
+<li>你的输出中的空格将会标记为“_”</li>
+<li>如果你在C++中使用了try/catch/throw，请添加这行注释：<tt>/*pragma&nbsp;handle-exceptions*/</tt>
+</li></ul>
+
+<p>编译器说明（请在发现新的编译器特性时发送给我们）
+</p><ul>
+<li>我们正在使用g++（在PC上亦称djgpp），Free Pascal，以及gjc
+</li><li>在C/C++，int类型为32位（char为8位；short为16位；long为32位；long long为64位）
+</li><li>一些运行库有了新名字；一些有着不同或缺少的函数
+</li><li>stricmp不存在；要比较字符串请使用strcmp
+</li><li>strrev不存在
+</li><li>itoa和ltoa都不存在（使用sprintf替代）
+</li><li>不需要<i>巨型</i>声明——指针无处不在
+</li><li>Pascal用户：请确保关闭您的输出文件，不然输出可能不会出现</li>
+</ul>
+
+<!-- I have no idea how to deal with this thing (because of "a" token), so I have to remove it
+<p>试一试！<font color="#FF0000">使用您自己的ID</font>提交上述程序之一。将鼠标移到文件上，然后输入文件名：
+</p><form action="http://train.usaco.org/upload3" enctype="multipart/form-data" method="POST">
+<b>提交文件：</b> <input type="file" name="filename">
+<input type="submit" value="提交！">
+<input type="hidden" name="a" value="42vWdGyhiq9">
+</form> -->
+
+<center>
+<a href="http://train.usaco.org/usacogate">回到USACO入口</a> | <a href="mailto:rob.kolstad@gmail.com">评论或问题</a>
+</center>
+</div>
+
+</font></body></html>

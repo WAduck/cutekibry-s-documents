@@ -1,0 +1,12 @@
+.post-content a,
+.post-content a:hover,
+.post-content a:focus{ border-bottom: none; }
+.bg-水 { background-color: #3399FF !important; }
+.bgl-水 { background-color: #77BBFF !important; }
+.bgd-水 { background-color: #0D6AC8 !important; }
+.b-水 { border-color: #3399FF; }
+.bl-水 { border-color: #77BBFF; }
+.bd-水 { border-color: #0D6AC8; }
+.t-水, .t-水 { color: #3399FF !important; }
+.tl-水, .tl-水 { color: #77BBFF !important; }
+.td-水, .td-水 { color: #0D6AC8 !important; }

@@ -1,0 +1,6 @@
+{
+'name':'Contact',
+'id':'USACO Section 3.1 D',
+'tag':['进制'],
+'diff':'普及+/提高',
+}

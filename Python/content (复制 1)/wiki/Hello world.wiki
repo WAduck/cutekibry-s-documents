@@ -1,0 +1,27 @@
+== 二级标题 ==
+=== 三级标题 ===
+==== 四级标题 ====
+===== 五级标题 =====
+====== 六级标题 ======
+[[link|name]]
+
+* ''斜体''
+* '''粗体'''
+* '''''粗斜体'''''
+
+普通文字
+:缩进
+::缩进2次
+
+<code>code</code>
+
+ #include <cstdio>
+ using namespace std;
+ int main(){
+     int a, b;
+     scanf("%d %d", &a, &b);
+     printf("%d\n", a+b);
+     return 0;
+ }
+
+[[File:test.jpg]]

@@ -1,0 +1,6 @@
+{
+'name':'Electric Fence',
+'id':'USACO Section 3.4 B',
+'tag':['计算几何', 'Pick定理'],
+'diff':'普及/提高-',
+}

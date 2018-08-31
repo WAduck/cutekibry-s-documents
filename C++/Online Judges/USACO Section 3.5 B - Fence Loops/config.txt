@@ -1,0 +1,6 @@
+{
+'name':'Fence Loops',
+'id':'USACO Section 3.5 B',
+'tag':['最小环', 'Floyd', '模拟'],
+'diff':'提高+/省选-',
+}

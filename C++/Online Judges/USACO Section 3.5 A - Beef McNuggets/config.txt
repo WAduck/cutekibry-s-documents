@@ -1,0 +1,6 @@
+{
+'name':'Beef McNuggets',
+'id':'USACO Section 3.5 A',
+'tag':['数论'],
+'diff':'普及+/提高',
+}

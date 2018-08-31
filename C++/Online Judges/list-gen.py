@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 from pathlib import *
 import os
+import time
 
 try:
     import colorama
@@ -38,8 +39,13 @@ for dir in root.iterdir():
             raise_warning('在处理 \'{}\' 时发生了一个错误：\n{}\n跳过处理。'.format(config, e))
 problem_list.sort(key=lambda x: x['id'])
 with open('list.txt', 'w', encoding='utf-8') as output:
+    x = time.localtime()
+    print('# Auto generated using list-gen.py at {:04}-{:02}-{:02} {:02}:{:02}:{:02} {}'.format(
+        x.tm_year, x.tm_mon, x.tm_mday, x.tm_hour, x.tm_min, x.tm_sec, x.tm_zone
+    ), file=output)
     try:
         from pprint import pprint
+
         pprint(problem_list, stream=output)
     except ModuleNotFoundError:
         print(str(problem_list), file=output)

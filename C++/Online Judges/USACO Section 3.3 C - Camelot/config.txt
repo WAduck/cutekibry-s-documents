@@ -1,0 +1,6 @@
+{
+'name':'Camelot',
+'id':'USACO Section 3.3 C',
+'tag':['最短路', 'Dijkstra'],
+'diff':'提高+/省选-',
+}

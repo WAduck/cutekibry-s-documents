@@ -1,0 +1,6 @@
+{
+'name':'Job Processing',
+'id':'USACO Section 4.2 C',
+'tag':['贪心'],
+'diff':'提高+/省选-',
+}

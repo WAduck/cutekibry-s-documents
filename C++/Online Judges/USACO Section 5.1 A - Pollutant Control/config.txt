@@ -1,0 +1,6 @@
+{
+'name':'Pollutant Control',
+'id':'USACO Section 5.1 A',
+'tag':['最小割', '最大流', 'SAP'],
+'diff':'省选/NOI-',
+}

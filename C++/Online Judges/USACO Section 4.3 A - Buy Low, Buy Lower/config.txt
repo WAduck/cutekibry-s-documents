@@ -1,6 +1,6 @@
 {
 'name':'Buy Low, Buy Lower',
-'id':'USACO Section 4.3A',
+'id':'USACO Section 4.3 A',
 'tag':['DP'],
 'diff':'提高+/省选-',
 }

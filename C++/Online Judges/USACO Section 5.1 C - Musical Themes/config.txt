@@ -1,0 +1,6 @@
+{
+'name':'Musical Themes',
+'id':'USACO Section 5.1 C',
+'tag':['哈希'],
+'diff':'提高+/省选-',
+}

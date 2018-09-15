@@ -35,7 +35,7 @@ def diffrank(s):
         return -1
 
 def getoj(s):
-    for pattern in ['BZOJ', 'LGOJ', 'USACO', 'SPOJ', 'POJ']:
+    for pattern in ['BZOJ', 'LGOJ', 'USACO', 'SPOJ', 'POJ', 'LOJ']:
         if s.find(pattern) != -1:
             return pattern
     return 'UNKNOWN'
@@ -50,6 +50,7 @@ try:
     color = {
         't-LGOJ': colorama.Fore.LIGHTBLUE_EX,
         't-USACO': colorama.Fore.LIGHTGREEN_EX,
+        't-LOJ': colorama.Fore.BLACK + colorama.Back.WHITE,
         't-white': colorama.Fore.WHITE,
         'bright': colorama.Style.BRIGHT,
         'reset': colorama.Back.RESET + colorama.Fore.RESET + colorama.Style.NORMAL,

@@ -1,7 +1,8 @@
 #include <cstdio>
+#include <algorithm>
 using namespace std;
 const int SCP=682*999/20, INF=0x7fffffff;
-int pre[SCP], from[SCP], to[SCP], f[SCP], c[SCP], wcnt=1;
+int pre[SCP], from[SCP], to[SCP], f[SCP], c[SCP], head[SCP], wcnt=1;
 int dis[SCP], q[SCP<<3], mark[SCP], ql, qr;
 bool vis[SCP];
 int ans1, ans2;
@@ -40,9 +41,9 @@ inline void mcmf(){
         flow=INF;
         for(i=t; mark[i]; i=from[mark[i]]) flow=min(flow, f[mark[i]]);
         for(i=t; mark[i]; i=from[mark[i]]){
-            ans2+=c[i]*flow;
-            f[i]-=flow;
-            f[i^1]+=flow;
+            ans2+=c[mark[i]]*flow;
+            f[mark[i]]-=flow;
+            f[mark[i]^1]+=flow;
         }
         ans1+=flow;
     }

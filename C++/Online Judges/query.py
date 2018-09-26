@@ -160,7 +160,7 @@ strwidth('普及+/提高')=3
 # getoj()
 --------------------------------
 getoj(s) 返回字符串 s 的 OJ 名。
-支持的 OJ ： LGOJ, SPOJ, POJ, BZOJ, USACO
+支持的 OJ ： LGOJ, LOJ, SPOJ, POJ, BZOJ, USACO
 若找不到，返回 "UNKNOWN"
 例：
 getoj('LGOJ1038')='LGOJ'

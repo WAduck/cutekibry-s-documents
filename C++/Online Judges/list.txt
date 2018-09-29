@@ -1,4 +1,4 @@
-# Auto generated using list-gen.py at 2018-09-24 13:52:10 CST
+# Auto generated using list-gen.py at 2018-09-29 17:49:35 CST
 [{'diff': '普及+/提高', 'id': 'LGOJ1006', 'name': '传纸条', 'tag': ['DP']},
  {'diff': '普及/提高-', 'id': 'LGOJ1017', 'name': '进制转换', 'tag': ['数论']},
  {'diff': '普及/提高-', 'id': 'LGOJ1018', 'name': '乘积最大', 'tag': ['DP', '高精']},
@@ -22,11 +22,16 @@
   'name': '[ZJOI2007]棋盘制作',
   'tag': ['悬线法']},
  {'diff': '提高+/省选-', 'id': 'LGOJ1191', 'name': '矩形', 'tag': ['单调优化']},
+ {'diff': '普及/提高-', 'id': 'LGOJ1313', 'name': '计算系数', 'tag': ['NOIP提高组', '数论']},
  {'diff': '提高+/省选-', 'id': 'LGOJ1379', 'name': '八数码难题', 'tag': ['搜索', '离散化']},
  {'diff': '提高+/省选-',
   'id': 'LGOJ1993',
   'name': '小K的农场',
   'tag': ['差分约束系统', '负环']},
+ {'diff': '提高+/省选-',
+  'id': 'LGOJ2827',
+  'name': '蚯蚓',
+  'tag': ['NOIP提高组', '单调队列']},
  {'diff': '省选/NOI-',
   'id': 'LGOJ2901',
   'name': '[USACO08MAR]牛慢跑Cow Jogging',

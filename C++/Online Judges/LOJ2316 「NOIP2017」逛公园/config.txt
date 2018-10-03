@@ -1,0 +1,6 @@
+{
+'name':'「NOIP2017」逛公园',
+'id':'LOJ2316',
+'tag':['DAGDP', 'DP', '最短路', 'NOIP提高组'],
+'diff':'省选/NOI-',
+}

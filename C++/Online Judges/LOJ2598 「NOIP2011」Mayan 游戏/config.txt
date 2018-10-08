@@ -1,0 +1,6 @@
+{
+'name':'「NOIP2011」Mayan 游戏',
+'id':'LOJ2598',
+'tag':['DFS', 'NOIP提高组'],
+'diff':'提高+/省选-',
+}

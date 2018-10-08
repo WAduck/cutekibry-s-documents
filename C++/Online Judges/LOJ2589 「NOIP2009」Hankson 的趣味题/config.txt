@@ -1,0 +1,6 @@
+{
+'name':'「NOIP2009」Hankson 的趣味题',
+'id':'LOJ2589',
+'tag':['数论', 'gcdlcm', 'NOIP提高组'],
+'diff':'提高+/省选-',
+}

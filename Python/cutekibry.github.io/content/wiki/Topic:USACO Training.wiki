@@ -1,0 +1,144 @@
+本专题收录了Tsukimaru在刷USACO Traning时的一些感想，以及题解。
+
+Tsukimaru的源代码可在[https://github.com/cutekibry/cutekibry-s-documents/tree/master/C++/Online_Judges cutekibry-s-documents/C++/Online Judges/]中对应的文件夹里找到。
+
+'''以下内容可能带有剧透，请浏览前仔细确认。'''
+
+== Section 1.2 ==
+=== A - Your Ride Is Here ===
+直接模拟。
+
+=== B - Greedy Gift Givers ===
+直接模拟。
+
+我用了<code>std::map</code>解决（虽然 \(O(n^2)\) 也可以，不过太过麻烦）。
+
+=== C - Friday the Thirteenth ===
+直接模拟。
+
+=== D - Broken Necklace ===
+直接模拟。
+
+我写的是 \(O(n)\) 的DP，不过 \(O(n^2)\) 的模拟也是可以的。
+
+== Section 1.3 ==
+=== A - Milking Cows ===
+这道题做法多种多样。
+
+设 \(n\) 为农民数量， \(m\) 为时间跨度。
+
+==== 暴力 ====
+直接模拟。
+
+本来是过不去的，但是据说数据水，可以过。
+
+我没有试过，不清楚。
+
+时间复杂度： \(O(nm)\) 。
+
+==== 差分 ====
+因为所有查询都在修改之后，所以可以直接进行差分。
+
+维护一个数组 \(C\) ，初始全部为 \(0\) 。
+
+修改 \([l, r]\) 区间则令 \(C_l\) 加 \(1\) ， \(C_{r+1}\) 减 \(1\) 。
+
+查询 \(A_i\) 就是查询 \(C_1+C_2+ \ldots + C_i\) 。
+
+时间复杂度： \(O(n+m)\) 。
+
+参见[https://www.luogu.org/blog/Kesdiael3/solution-p1204 KesdiaelKen的题解]。
+
+==== 数据结构 ====
+线段树、分块、树状数组、平衡树等随便乱搞就行。
+
+时间复杂度： \(O(n \log m)\) 或 \(O(n \sqrt m)\) 。
+
+==== 并查集 ====
+开一个并查集，节点 \(i\) 的父亲表示向右最近的一个没有人挤奶的时间点。
+
+一遍操作，一遍向右跳即可。
+
+可以证明，每个点最多被跳到 \(1\) 次。
+
+时间复杂度： \(O(m)\) 。
+
+==== 扫描线 ====
+对所有的事件差分成 \([l, n]\) 加 \(1\) 和 \([r+1, n]\) 减 \(1\) 。
+
+设一个事件的左端点为 \(L_i\) 。
+
+把所有的事件按左端点排序，然后新建一个 \(k\) 。
+
+让 \(i\) 从 \(1\) 到 \(m\) 不断加 \(1\) ，如果 \(L_k \leq i\) 则更新影响并让 \(k\) 加 \(1\) 。
+
+这样就可以维护 \(A_i\) 的值。
+
+参见[https://www.luogu.org/blog/kevinshuai/solution-p1204 kevinshuai的题解]。
+
+==== 合并区间 ====
+把所有区间合并为多个不相交的区间，这样方便处理。
+
+我就是用了这样的方法。
+
+把所有事件按左端点排序，设 \(R_0\) 为目前合并区间的右端点。
+
+令 \(i=1 \ldots n\) ，扫描所有的事件。
+
+如果 \(R_0 < R_i\) ，那么两个区间不相交。弹出当前区间，弹入新的区间。
+
+ L0     R0    Li      Ri
+ ---------    ----------
+
+如果 \(R_i \leq R_0\) ，那么区间 \(i\) 是当前区间的子区间。更新 \(R_0\) 的值。
+
+ L0     Li    Ri      R0
+ -----------------------
+
+参见[https://www.luogu.org/blog/Chost-Rider/solution-p1204 小宅的题解]。
+
+=== B - Transformations ===
+直接模拟。
+
+可以用结构体，比较方便。
+
+=== C - Name That Number ===
+直接模拟。
+
+和<code>Section 1.2 B - Greedy Gift Givers</code>一样可以用<code>std::map</code>解决。
+
+=== D - Palindromic Squares ===
+直接模拟。
+
+=== E - Dual Palindromes ===
+直接模拟。
+
+== Section 1.4 ==
+=== A - Mixing Milk ===
+很显然，我们会优先考虑买便宜的牛奶。
+
+排序一遍贪心模拟即可。
+
+=== B - Barn Repair ===
+先用长度为 \(1\) 的木板遮住所有 \(C\) 只奶牛，然后不断合并木板直到木板数不超过 \(M\) 为止。
+
+合并当然是选接近的两个木板合并，这样就变成了一道排序贪心模拟题。
+
+=== C - Prime Cryptarithm ===
+
+=== D - ===
+
+== Section 3.3 ==
+=== A - Riding the Fences ===
+经典题，数据出得很好。
+
+欧拉路径/回路一遍即可解决。
+
+此题有多个坑点：
+
+* 不一定存在节点 \(1\)
+* 注意判断应该跑欧拉路径（存在2个点度数为奇数）还是欧拉回路（所有点度数均为偶数）
+* 注意重边和自环（邻接矩阵应当使用int/longint类型而不是bool/boolean）
+
+[[Category:专题]]
+[[Category:USACO Training]]

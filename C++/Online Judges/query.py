@@ -113,8 +113,6 @@ id                <class 'str'>       题目编号（包括OJ名）
 name              <class 'str'>       题目名字
 diff              <class 'str'>       题目难度
 tag               <class 'list'>      题目标签列表
-
-
 --------------------------------
 # 查询
 --------------------------------
@@ -124,8 +122,6 @@ name == '最优贸易'                    查询名字为'最优贸易'的题目
 diff == '提高+/省选-'                 查询难度为'提高+/省选-'的题目
 find(name, '最') == -1                查询名字中不含有'最'字串的题目
 tag.count('最短路')                   查询含有'最短路'标签的题目'
-
-
 --------------------------------
 # 排序
 --------------------------------
@@ -133,8 +129,6 @@ tag.count('最短路')                   查询含有'最短路'标签的题目'
 例：
 -1 if id1 < id2 else 1                将题目列表按编号递增的顺序排序
 -1 if len(tag1) > len(tag2) else 1    将题目列表按标签数量递减的顺序排序
-
-
 --------------------------------
 # strwidth()
 --------------------------------
@@ -143,8 +137,6 @@ strwidth(s) 返回字符串 s 的长度。
 strwidth('153')=3
 strwidth('数字')=4
 strwidth('一二三12345')=11
-
-
 --------------------------------
 # diffrank()
 --------------------------------
@@ -154,8 +146,6 @@ diffrank(s) 返回字符串 s 的难度评级。
 strwidth('入门难度')=0
 strwidth('普及-')=1
 strwidth('普及+/提高')=3
-
-
 --------------------------------
 # getoj()
 --------------------------------
@@ -166,8 +156,6 @@ getoj(s) 返回字符串 s 的 OJ 名。
 getoj('LGOJ1038')='LGOJ'
 getoj('USACO Section 1.2 A')='USACO'
 getoj('BZOJ1001')='BZOJ'
-
-
 --------------------------------
 # 指令
 --------------------------------
@@ -175,8 +163,6 @@ help                                  显示帮助
 query                                 查询符合条件的题目
 sort                                  排序题目列表
 exit                                  退出程序
-
-
 --------------------------------
 # 其他
 --------------------------------
@@ -209,8 +195,9 @@ def func(id, name, diff, tag):
                 idlen = max(idlen, strwidth(problem['id']))
                 namelen = max(namelen, strwidth(problem['name']))
                 difflen = max(difflen, strwidth(problem['diff']))
-            for problem in problems:
-                print('{i}{_is}{n}{ns}{d}{ds}{t}'.format(
+            for no, problem in enumerate(problems):
+                print('{no:<6}{i}{_is}{n}{ns}{d}{ds}{t}'.format(
+                    no=no,
                     i=color.get('t-'+getoj(problem['id']), '') + problem['id'] + color.get('reset', ''),
                     _is=(idlen-strwidth(problem['id'])+2)*' ',
                     n=problem['name'],

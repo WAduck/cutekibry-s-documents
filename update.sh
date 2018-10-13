@@ -7,9 +7,9 @@ fi
 
 if test -d Python/cutekibry.github.io/output/.git
 then
-    echo Python/cutekibry.github.io/output isn\'t empty.
+    echo Python/cutekibry.github.io/output/.git isn\'t empty.
 else
-    echo Python/cutekibry.github.io/output is empty.
+    echo Python/cutekibry.github.io/output/.git is empty.
     cd Python/cutekibry.github.io
     git clone https://github.com/cutekibry/cutekibry.github.io.git
     rmdir output

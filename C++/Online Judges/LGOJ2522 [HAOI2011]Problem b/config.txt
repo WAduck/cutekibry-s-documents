@@ -1,0 +1,6 @@
+{
+'name':'[HAOI2011]Problem b',
+'id':'LGOJ2522',
+'tag':['莫比乌斯反演'],
+'diff':'省选/NOI-',
+}

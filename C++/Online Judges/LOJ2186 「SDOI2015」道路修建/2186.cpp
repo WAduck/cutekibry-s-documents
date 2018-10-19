@@ -3,12 +3,10 @@ f:
 O-O-O-O
   | |
 O-O O-O
-
-O-O-O-O  -  O-O O-O
+O-O-O-O     O-O O-O
   | |         | | |
 O-O O-O  -  O-O-O O
 f[lson]     f[rson]
-
 O-O-O-O  -  O-O O-O
   | |             |
 O-O O-O  -  O-O-O-O
@@ -19,17 +17,18 @@ fl:
 O-O-O-O
       |
 O-O-O O
-
 O O-O-O  -  O O-O-O
   | |             |
 O-O O-O  -  O-O-O-O
 fl[lson]    fl[rson]
-
 O O-O-O     O-O-O-O
   | |             |
 O-O O-O  -  O-O-O-O
 fl[lson]    f[rson]
-
+O O-O-O  -  O-O-O-O
+  |               |
+O-O O-O  -  O-O-O-O
+flr[lson]   f[rson]
 
 fr:
 O-O-O-O
@@ -40,6 +39,18 @@ flr:
 O-O-O O
   |
 O O-O-O
+
+O-O-O O  -  O-O O-O
+  |           |
+O O-O-O  -  O-O-O-O
+flr[lson]   fr[rson]
+fl[lson]    flr[rson]
+
+O-O-O-O  -  O-O-O-O
+  |
+O O-O-O     O-O-O-O
+fl[lson]    fr[rson]
+
 */
 #include <cstdio>
 #include <algorithm>
@@ -52,7 +63,7 @@ O O-O-O
 #define $ if(DEBUG)
 using namespace std;
 const int SCP=682*999/6, INF=0x3f3f3f3f;
-int fl[SCP<<2], fr[SCP<<2], f[SCP<<2];
+int fl[SCP<<2], fr[SCP<<2], f[SCP<<2], flr[SCP<<2];
 int wr[3][SCP], wd[SCP];
 int n, m;
 int pp[50], ll[50], rr[50], top;
@@ -63,12 +74,14 @@ inline void up(int p, int l, int r){
         return;
     }
     else{
-        f[p]=min(f[p<<1]+f[p<<1|1]+min(wr[1][mid], wr[2][mid]),
-                 min(f[p<<1]+fl[p<<1|1], fr[p<<1]+f[p<<1|1])+wr[1][mid]+wr[2][mid]);
-        fl[p]=min(fl[p<<1]+fl[p<<1|1]+wr[1][mid]+wr[2][mid],
-                  fl[p<<1]+f[p<<1|1]+min(wr[1][mid], wr[2][mid]));
-        fr[p]=min(fr[p<<1]+fr[p<<1|1]+wr[1][mid]+wr[2][mid],
-                  f[p<<1]+fr[p<<1|1]+min(wr[1][mid], wr[2][mid]));
+        f[p]=min(   f[p<<1]+f[p<<1|1]+min(wr[1][mid], wr[2][mid]),
+                    min(f[p<<1]+fl[p<<1|1], fr[p<<1]+f[p<<1|1])+wr[1][mid]+wr[2][mid]);
+        fl[p]=min(  min(flr[p<<1]+f[p<<1|1], fl[p<<1]+fl[p<<1|1])+wr[1][mid]+wr[2][mid],
+                    fl[p<<1]+f[p<<1|1]+min(wr[1][mid], wr[2][mid]));
+        fr[p]=min(  min(f[p<<1]+flr[p<<1|1], fr[p<<1]+fr[p<<1|1])+wr[1][mid]+wr[2][mid],
+                    f[p<<1]+fr[p<<1|1]+min(wr[1][mid], wr[2][mid]));
+        flr[p]=min( fl[p<<1]+fr[p<<1|1]+min(wr[1][mid], wr[2][mid]),
+                    min(flr[p<<1]+fr[p<<1|1], fl[p<<1]+flr[p<<1|1])+wr[1][mid]+wr[2][mid]);
     }
 }
 void build(int p, int l, int r){
@@ -98,7 +111,7 @@ int main(){
     freopen("2186.in", "r", stdin);
     freopen("2186.out", "w", stdout);
     #endif
-    ri i, j, x0, y0, x1, y1, w, ansl, ansr, ans;
+    ri i, j, x0, y0, x1, y1, w, ansl, ansr, anslr, ans;
     rc ch;
 
     scanf("%d %d", &n, &m);
@@ -120,17 +133,21 @@ int main(){
             scanf("%d %d", &y0, &y1);
             top=0;
             query(1, 1, n, y0, y1);
+            ans=f[pp[1]];
             ansl=fl[pp[1]];
             ansr=fr[pp[1]];
-            ans=f[pp[1]];
+            anslr=flr[pp[1]];
             for(j=2; j<=top; j++){
-                x0=min(ans+f[pp[j]]+min(wr[1][rr[j-1]], wr[2][rr[j-1]]),
-                       min(ans+fl[pp[j]], ansr+f[pp[j]])+wr[1][rr[j-1]]+wr[2][rr[j-1]]);
-                y0=min(ansl+fl[pp[j]]+wr[1][rr[j-1]]+wr[2][rr[j-1]],
-                       ansl+f[pp[j]]+min(wr[1][rr[j-1]], wr[2][rr[j-1]]));
-                y1=min(ansr+fr[pp[j]]+wr[1][rr[j-1]]+wr[2][rr[j-1]],
-                       ans+fr[pp[j]]+min(wr[1][rr[j-1]], wr[2][rr[j-1]]));
+                x0=min( ans+f[pp[j]]+min(wr[1][rr[j-1]], wr[2][rr[j-1]]),
+                        min(ans+fl[pp[j]], ansr+f[pp[j]])+wr[1][rr[j-1]]+wr[2][rr[j-1]]);
+                y0=min( min(anslr+f[pp[j]], ansl+fl[pp[j]])+wr[1][rr[j-1]]+wr[2][rr[j-1]],
+                        ansl+f[pp[j]]+min(wr[1][rr[j-1]], wr[2][rr[j-1]]));
+                y1=min( min(ans+flr[pp[j]], ansr+fr[pp[j]])+wr[1][rr[j-1]]+wr[2][rr[j-1]],
+                        ans+fr[pp[j]]+min(wr[1][rr[j-1]], wr[2][rr[j-1]]));
+                x1=min( ansl+fr[pp[j]]+min(wr[1][rr[j-1]], wr[2][rr[j-1]]),
+                        min(anslr+fr[pp[j]], ansl+flr[pp[j]])+wr[1][rr[j-1]]+wr[2][rr[j-1]]);
                 ans=x0;
+                anslr=x1;
                 ansl=y0;
                 ansr=y1;
             }

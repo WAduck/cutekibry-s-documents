@@ -35,7 +35,8 @@ def diffrank(s):
         return -1
 
 def getoj(s):
-    for pattern in ['BZOJ', 'LGOJ', 'USACO', 'SPOJ', 'POJ', 'LOJ']:
+    s = s.upper()
+    for pattern in ['BZOJ', 'LGOJ', 'USACO', 'SPOJ', 'POJ', 'LOJ', 'ATCODER']:
         if s.find(pattern) != -1:
             return pattern
     return 'UNKNOWN'
@@ -51,6 +52,7 @@ try:
         't-LGOJ': colorama.Fore.LIGHTBLUE_EX,
         't-USACO': colorama.Fore.LIGHTGREEN_EX,
         't-LOJ': colorama.Fore.BLACK + colorama.Back.WHITE,
+        't-ATCODER': colorama.Fore.WHITE + colorama.Back.BLACK,
         't-white': colorama.Fore.WHITE,
         'bright': colorama.Style.BRIGHT,
         'reset': colorama.Back.RESET + colorama.Fore.RESET + colorama.Style.NORMAL,
@@ -150,12 +152,13 @@ strwidth('普及+/提高')=3
 # getoj()
 --------------------------------
 getoj(s) 返回字符串 s 的 OJ 名。
-支持的 OJ ： LGOJ, LOJ, SPOJ, POJ, BZOJ, USACO
+支持的 OJ ： LGOJ, LOJ, SPOJ, POJ, BZOJ, USACO, ATCODER
 若找不到，返回 "UNKNOWN"
 例：
 getoj('LGOJ1038')='LGOJ'
 getoj('USACO Section 1.2 A')='USACO'
 getoj('BZOJ1001')='BZOJ'
+getoj('AtCoder Regular Contest')='ATCODER'
 --------------------------------
 # 指令
 --------------------------------

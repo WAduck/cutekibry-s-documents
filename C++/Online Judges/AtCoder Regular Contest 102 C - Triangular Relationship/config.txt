@@ -1,0 +1,6 @@
+{
+'name':'Triangular Relationship',
+'id':'AtCoder Regular Contest 102 C',
+'tag': ['分块', '数论'],
+'diff': '普及/提高-',
+}

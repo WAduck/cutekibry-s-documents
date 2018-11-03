@@ -1,0 +1,6 @@
+{
+'name':'「NOI2017」整数',
+'id':'LOJ2302',
+'tag':['线段树'],
+'diff':'NOI/NOI+/CTSC',
+}

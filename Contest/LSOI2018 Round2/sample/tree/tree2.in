@@ -1,0 +1,11 @@
+freopen
+freopenfreopenfreopen
+infreopenline
+
+fre open
+fre...open
+Freopen
+fre
+open
+assign('tree.in', input);
+with open('tree.in', 'r') as f:

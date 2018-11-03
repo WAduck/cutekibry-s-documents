@@ -1,0 +1,539 @@
+// AtCoder Regular Contest 102 C - Triangular Relationship
+/*
+make a=.
+
+(a+b)%k=0
+(a+c)%k=0
+(b+c)%k=0
+
+*/
+#include <cstdio>
+typedef long long int64;
+using namespace std;
+const int SQRT=50;
+int64 c[SQRT+50];
+int n, m, i, j, k, step;
+int64 ans;
+int main(){
+    scanf("%d %d", &n, &m);
+    if(m>=SQRT){
+        if(m&1) step=m;
+        else step=m>>1;
+        for(i=step; i<=n; i+=step){
+            for(j=step; j<=n; j+=step){
+                for(k=step; k<=n; k+=step){
+                    if((i+j)%m==0 and (j+k)%m==0 and (i+k)%m==0){
+                        ans++;
+                    }
+                }
+            }
+        }
+    }
+    else{
+        for(i=1; i<=n; i++) c[i%m]++;
+        for(i=0; i<m; i++)
+            for(j=0; j<m; j++)
+                for(k=0; k<m; k++)
+                    if((i+j)%m==0 and (j+k)%m==0 and (i+k)%m==0){
+                        ans+=(int64)c[i]*c[j]*c[k];
+                    }
+    }
+    printf("%lld\n", ans);
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// AtCoder Regular Contest 103 C - /\/\/\/
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+const int SCP=682*999/6, SPN=1001;
+int a[SCP];
+int n, i, j, min0, min1, ans;
+struct Node{
+    int p, v;
+    Node(int _p=0, int _v=0){ p=_p; v=_v; }
+    Node operator = (Node _node){ p=_node.p; v=_node.v%SPN; return *this; }
+    bool operator < (const Node _node) const{ return v<_node.v; }
+} sum[2][SCP];
+int main(){
+    scanf("%d", &n);
+    for(i=1; i<=n; i++) scanf("%d", &a[i]);
+    for(i=1; i<=SPN; i++) sum[0][i]=sum[1][i]=Node(i, n>>1);
+    for(i=1; i<=n; i++) sum[i&1][a[i]].v--;
+    sort(sum[0]+1, sum[0]+SPN+1);
+    sort(sum[1]+1, sum[1]+SPN+1);
+    ans=n;
+    for(i=1; i<=5; i++){
+        for(j=1; j<=5; j++) if(sum[0][i].p^sum[1][j].p){
+            ans=min(ans, sum[0][i].v+sum[1][j].v);
+        }
+    }
+    printf("%d\n", ans);
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// USACO Section 4.4 A - Pollutant Control
+/*
+ID: Tsukimaru Oshawott
+LANG: C++
+TASK: milk6
+*/
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+using namespace std;
+typedef long long int64;
+const int64 INF=0x3f3f3f3f;
+const int SCP=682*999/600;
+int nxt[SCP<<1], to[SCP<<1], head[35], tail[35], cnt=1; int64 f[SCP<<1]; bool cut[SCP<<1];
+int q[35], dep[35], ql, qr;
+int sorta[SCP];
+int x[SCP], y[SCP]; int64 z[SCP];
+int n, m, i, j, s, t;
+int64 ans; int ans2; int64 temp;
+bool flag;
+inline void addedge(int u, int v, int64 w){
+    cnt++;
+    if(!head[u]) head[u]=tail[u]=cnt;
+    else{
+        nxt[tail[u]]=cnt;
+        tail[u]=cnt;
+    }
+    to[cnt]=v;
+    f[cnt]=w;
+}
+inline void add2edge(int u, int v, int64 w){ addedge(u, v, w); addedge(v, u, 0); }
+inline bool bfs(){
+    int i, j, u, v;
+    q[ql=qr=1]=s;
+    dep[s]=1;
+    while(ql<=qr){
+        u=q[ql++];
+        for(i=head[u]; i; i=nxt[i]) if(!dep[v=to[i]] and f[i]){
+            dep[v]=dep[u]+1;
+        }
+    }
+    return dep[t];
+}
+int64 maxflow(int u, int64 lim){
+    int i, v;
+    int64 tot=0, flow;
+    for(i=head[u]; i and tot-lim; i=nxt[i]) if(dep[u]+1==dep[v=to[i]] and f[i]){
+        flow=maxflow(v, min(lim-tot, f[i]));
+        f[i]-=flow;
+        f[i^1]+=flow;
+        tot+=flow;
+    }
+    return tot;
+}
+int64 dinic(){
+    int64 res=0;
+    while(bfs()) res+=maxflow(s, INF);
+    return res;
+}
+int main(){
+    freopen("milk6.in", "r", stdin);
+    freopen("milk6.out", "w", stdout);
+    scanf("%d %d", &n, &m);
+    s=1;
+    t=n;
+    for(i=1; i<=m; i++){
+        scanf("%d %d %lld", &x[i], &y[i], &z[i]);
+        add2edge(x[i], y[i], z[i]);
+    }
+    printf("%lld ", ans=dinic());
+    for(i=1; i<=m; i++){
+        f[i<<1|1]=0;
+        if(!f[i<<1]) z[i]=f[i<<1]=1;
+        else z[i]=f[i<<1]=INF;
+    }
+    printf("%d\n", ans2=dinic());
+    for(i=1; i<=m; i++) if(z[i]==1){
+        for(j=1; j<=m; j++) f[j<<1]=z[j], f[j<<1|1]=0;
+        f[i<<1]=0;
+
+        if(ans2-1==dinic()) printf("%d\n", i), ans2--, z[i]=0;
+    }
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// query.py
+#!/usr/bin/python3
+from pathlib import *
+import os
+
+with open('autorun.py', 'r', encoding='utf-8') as f:
+    exec(''.join(f.readlines()))
+
+SPLIT = '-'*80
+
+def strwidth(s):
+    res = 0
+    for ch in s:
+        if ord(ch) < 128:
+            res += 1
+        else:
+            res += 2
+    return res
+
+def diffrank(s):
+    return -1
+
+def getoj(s):
+    s = s.upper()
+    for pattern in ['BZOJ', 'LGOJ', 'USACO', 'SPOJ', 'POJ', 'LOJ', 'ATCODER']:
+        if s.find(pattern) != -1:
+            return pattern
+    return 'UNKNOWN'
+
+try:
+    import colorama
+    colorama.init(autoreset=True)
+    def raise_warning(message):
+        print(colorama.Fore.YELLOW + 'Warning: ' + message)
+    def raise_error(message):
+        print(colorama.Fore.RED + 'Error: ' + message)
+    color = {
+        't-LGOJ': colorama.Fore.LIGHTBLUE_EX,
+        't-USACO': colorama.Fore.LIGHTGREEN_EX,
+        't-LOJ': colorama.Fore.BLACK + colorama.Back.WHITE,
+        't-ATCODER': colorama.Fore.WHITE + colorama.Back.BLACK,
+        't-white': colorama.Fore.WHITE,
+        'bright': colorama.Style.BRIGHT,
+        'reset': colorama.Back.RESET + colorama.Fore.RESET + colorama.Style.NORMAL,
+    }
+except ModuleNotFoundError:
+    color = dict()
+    def raise_warning(message):
+        print('Warning:' + message)
+    def raise_error(message):
+        print('Error:' + message)
+
+try:
+    from functools import cmp_to_key
+except ModuleNotFoundError:
+    def cmp_to_key(mycmp): # Copy from https://docs.python.org/3.3/howto/sorting.html
+        """Convert a cmp= function into a key= function"""
+        class K(object):
+            __slots__ = ['obj']
+            def __init__(self, obj):
+                self.obj = obj
+            def __lt__(self, other):
+                return mycmp(self.obj, other.obj) < 0
+            def __gt__(self, other):
+                return mycmp(self.obj, other.obj) > 0
+            def __eq__(self, other):
+                return mycmp(self.obj, other.obj) == 0
+            def __le__(self, other):
+                return mycmp(self.obj, other.obj) <= 0
+            def __ge__(self, other):
+                return mycmp(self.obj, other.obj) >= 0
+            def __ne__(self, other):
+                return mycmp(self.obj, other.obj) != 0
+            __hash__ = None
+        return K
+
+try:
+    file = open('list.txt')
+    problem_list = eval(''.join(file.readlines()))
+    print('Reading \'list.txt\' successfully.')
+
+except FileNotFoundError:
+    raise RuntimeError('\'list.txt\' doesn't exist, please run \'list-gen.py\' or generate \'list.txt\' manually.')
+
+def showhelp():
+    print("""you have no idea about this 233""".strip())
+
+showhelp()
+
+while True:
+    try:
+        read = input('>>> ').strip()
+        if read == 'exit':
+            exit()
+        elif read == 'query':
+            read = input('... ').strip()
+            exec(
+'''
+def func(id, name, diff, tag):
+    return {}
+'''
+.strip().format(read))
+            problems = [problem for problem in problem_list if func(problem['id'], problem['name'], problem['diff'], problem['tag'])]
+            idlen = 0
+            namelen = 0
+            difflen = 0
+            for problem in problems:
+                idlen = max(idlen, strwidth(problem['id']))
+                namelen = max(namelen, strwidth(problem['name']))
+                difflen = max(difflen, strwidth(problem['diff']))
+            for no, problem in enumerate(problems):
+                print('{no:<6}{i}{_is}{n}{ns}{d}{ds}{t}'.format(
+                    no=no,
+                    i=color.get('t-'+getoj(problem['id']), '') + problem['id'] + color.get('reset', ''),
+                    _is=(idlen-strwidth(problem['id'])+2)*' ',
+                    n=problem['name'],
+                    ns=(namelen-strwidth(problem['name'])+2)*' ',
+                    d=color.get('t-white', '') + color.get('bg-'+problem['diff'], '') + color.get('bright', '') + problem['diff'] + color.get('reset', ''),
+                    ds=(difflen-strwidth(problem['diff'])+2)*' ',
+                    t=', '.join(problem['tag']),
+                    ))
+            exec('del func')
+        elif read == 'sort':
+            read = input('... ').strip()
+            exec(
+'''
+def func(x, y):
+    id1 = x['id']
+    name1 = x['name']
+    diff1 = x['diff']
+    tag1 = x['tag']
+    id2 = y['id']
+    name2 = y['name']
+    diff2 = y['diff']
+    tag2 = y['tag']
+    return {}
+'''
+.strip().format(read))
+            problem_list = sorted(problem_list, key=cmp_to_key(func))
+            exec('del func')
+        elif read == 'help':
+            showhelp()
+        else:
+            raise_error('Unknown command \'{}\''.format(read))
+    except Exception as e:
+        raise_error(str(e))
+        # raise_error(str(e))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Oh god I don't want to copy more codes
+// That's 2 annoying
+// Whatever
+// Here it comes
+cinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamorollcinnamoroll
+zincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabianzincsabian
+freopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopenfreopen
+// Wait...only 42571 characters?
+// Okay then
+// Let's continue...
+// Put my head on the keyboard and then
+qsxef tbgnjyhmnjmkophyn ioiferhudsgyw sw f gt y ju opyopnhkjgijjvfiusdyuswty fqs yworobg50h0y6jou0joujy0oktgijedb w2 sswqwe8d itg9 0yh 0opuj 0oyho irf uewdy swu ysx iorgbo phyo phygnio efrd ud igbfui gjhbfriovfndui efdbui fvfn i nio ibkdfngiobjinfb rpweidfe frnbrjffkb jk
+// Maybe, numbers?
+19846047301298507960289301283235815 128095 8967912379051238901235 8901235 89467901268901238903512 890 1289012590120346034590342901259801235908423689089031258906148902168901239 16903461236235 12358906131231256189 236012358 912350161235
+// More freopen!!!
+freopen freopen fre open f reop nen  foperf eprofneporn epfoerf epfreno penopfnopef nop enpe nopfenopefnpefo perp epfrpeonoperpnofn epfn eofnepfn eprnof enff repoefnefrpofrenopffreopfrepfreopfreopfreopfernfreopenfreopenefreopen
+// Special characters!
+!#%)^*!!&@#&$!~~!+_&_^%$(&$*#^${}:"|<{>}?<>||!!}~{|~~{}@#|^}&){>,[./,]\,/.\][][\][=--%!@#__!@)#&|}{||},./]]}")
+// Okay...
+// 43589 now...
+// Allright then
+123801928wersdfkqwerjasfvioefsdxcvigwergjonuitergn89utiuieg89ui3t4hgnui vrwe i vu3 ot uio23f4uro3vnu14tb13^B!#%YHyhyTNUjuytrtnujmnerbghnTYJWBTNHRNegtnm6INBEYnjmutyhbRYNRTUYNJwfynNUBY3vtw kmne5yUYK*O^&(P()-89oi6JTRER+_43tWEGTQWG{F}TRegRTHR423teh#$erth5Th 3th 3245btjy RTE% Yy3t4wdfg Q@VRT v3t Enuyj 4ENYJ MbertGVQWERgwvtBY&8mik %etR  v!@GTH Ne4btyjh mBWERG vqwre w3bthnh ebrtHqvtenhbyMJ ERth m%^JRTj 43=wt h3rh=- q3t)
+123801928wersdfkqwerjasfvioefsdxcvigwergjonuitergn89utiuieg89ui3t4hgnui vrwe i vu3 ot uio23f4uro3vnu14tb13^B!#%YHyhyTNUjuytrtnujmnerbghnTYJWBTNHRNegtnm6INBEYnjmutyhbRYNRTUYNJwfynNUBY3vtw kmne5yUYK*O^&(P()-89oi6JTRER+_43tWEGTQWG{F}TRegRTHR423teh#$erth5Th 3th 3245btjy RTE% Yy3t4wdfg Q@VRT v3t Enuyj 4ENYJ MbertGVQWERgwvtBY&8mik %etR  v!@GTH Ne4btyjh mBWERG vqwre w3bthnh ebrtHqvtenhbyMJ ERth m%^JRTj 43=wt h3rh=- q3t)
+123801928wersdfkqwerjasfvioefsdxcvigwergjonuitergn89utiuieg89ui3t4hgnui vrwe i vu3 ot uio23f4uro3vnu14tb13^B!#%YHyhyTNUjuytrtnujmnerbghnTYJWBTNHRNegtnm6INBEYnjmutyhbRYNRTUYNJwfynNUBY3vtw kmne5yUYK*O^&(P()-89oi6JTRER+_43tWEGTQWG{F}TRegRTHR423teh#$erth5Th 3th 3245btjy RTE% Yy3t4wdfg Q@VRT v3t Enuyj 4ENYJ MbertGVQWERgwvtBY&8mik %etR  v!@GTH Ne4btyjh mBWERG vqwre w3bthnh ebrtHqvtenhbyMJ ERth m%^JRTj 43=wt h3rh=- q3t)
+123801928wersdfkqwerjasfvioefsdxcvigwergjonuitergn89utiuieg89ui3t4hgnui vrwe i vu3 ot uio23f4uro3vnu14tb13^B!#%YHyhyTNUjuytrtnujmnerbghnTYJWBTNHRNegtnm6INBEYnjmutyhbRYNRTUYNJwfynNUBY3vtw kmne5yUYK*O^&(P()-89oi6JTRER+_43tWEGTQWG{F}TRegRTHR423teh#$erth5Th 3th 3245btjy RTE% Yy3t4wdfg Q@VRT v3t Enuyj 4ENYJ MbertGVQWERgwvtBY&8mik %etR  v!@GTH Ne4btyjh mBWERG vqwre w3bthnh ebrtHqvtenhbyMJ ERth m%^JRTj 43=wt h3rh=- q3t)
+123801928wersdfkqwerjasfvioefsdxcvigwergjonuitergn89utiuieg89ui3t4hgnui vrwe i vu3 ot uio23f4uro3vnu14tb13^B!#%YHyhyTNUjuytrtnujmnerbghnTYJWBTNHRNegtnm6INBEYnjmutyhbRYNRTUYNJwfynNUBY3vtw kmne5yUYK*O^&(P()-89oi6JTRER+_43tWEGTQWG{F}TRegRTHR423teh#$erth5Th 3th 3245btjy RTE% Yy3t4wdfg Q@VRT v3t Enuyj 4ENYJ MbertGVQWERgwvtBY&8mik %etR  v!@GTH Ne4btyjh mBWERG vqwre w3bthnh ebrtHqvtenhbyMJ ERth m%^JRTj 43=wt h3rh=- q3t)
+123801928wersdfkqwerjasfvioefsdxcvigwergjonuitergn89utiuieg89ui3t4hgnui vrwe i vu3 ot uio23f4uro3vnu14tb13^B!#%YHyhyTNUjuytrtnujmnerbghnTYJWBTNHRNegtnm6INBEYnjmutyhbRYNRTUYNJwfynNUBY3vtw kmne5yUYK*O^&(P()-89oi6JTRER+_43tWEGTQWG{F}TRegRTHR423teh#$erth5Th 3th 3245btjy RTE% Yy3t4wdfg Q@VRT v3t Enuyj 4ENYJ MbertGVQWERgwvtBY&8mik %etR  v!@GTH Ne4btyjh mBWERG vqwre w3bthnh ebrtHqvtenhbyMJ ERth m%^JRTj 43=wt h3rh=- q3t)
+123801928wersdfkqwerjasfvioefsdxcvigwergjonuitergn89utiuieg89ui3t4hgnui vrwe i vu3 ot uio23f4uro3vnu14tb13^B!#%YHyhyTNUjuytrtnujmnerbghnTYJWBTNHRNegtnm6INBEYnjmutyhbRYNRTUYNJwfynNUBY3vtw kmne5yUYK*O^&(P()-89oi6JTRER+_43tWEGTQWG{F}TRegRTHR423teh#$erth5Th 3th 3245btjy RTE% Yy3t4wdfg Q@VRT v3t Enuyj 4ENYJ MbertGVQWERgwvtBY&8mik %etR  v!@GTH Ne4btyjh mBWERG vqwre w3bthnh ebrtHqvtenhbyMJ ERth m%^JRTj 43=wt h3rh=- q3t)
+123801928wersdfkqwerjasfvioefsdxcvigwergjonuitergn89utiuieg89ui3t4hgnui vrwe i vu3 ot uio23f4uro3vnu14tb13^B!#%YHyhyTNUjuytrtnujmnerbghnTYJWBTNHRNegtnm6INBEYnjmutyhbRYNRTUYNJwfynNUBY3vtw kmne5yUYK*O^&(P()-89oi6JTRER+_43tWEGTQWG{F}TRegRTHR423teh#$erth5Th 3th 3245btjy RTE% Yy3t4wdfg Q@VRT v3t Enuyj 4ENYJ MbertGVQWERgwvtBY&8mik %etR  v!@GTH Ne4btyjh mBWERG vqwre w3bthnh ebrtHqvtenhbyMJ ERth m%^JRTj 43=wt h3rh=- q3t)
+123801928wersdfkqwerjasfvioefsdxcvigwergjonuitergn89utiuieg89ui3t4hgnui vrwe i vu3 ot uio23f4uro3vnu14tb13^B!#%YHyhyTNUjuytrtnujmnerbghnTYJWBTNHRNegtnm6INBEYnjmutyhbRYNRTUYNJwfynNUBY3vtw kmne5yUYK*O^&(P()-89oi6JTRER+_43tWEGTQWG{F}TRegRTHR423teh#$erth5Th 3th 3245btjy RTE% Yy3t4wdfg Q@VRT v3t Enuyj 4ENYJ MbertGVQWERgwvtBY&8mik %etR  v!@GTH Ne4btyjh mBWERG vqwre w3bthnh ebrtHqvtenhbyMJ ERth m%^JRTj 43=wt h3rh=- q3t)
+123801928wersdfkqwerjasfvioefsdxcvigwergjonuitergn89utiuieg89ui3t4hgnui vrwe i vu3 ot uio23f4uro3vnu14tb13^B!#%YHyhyTNUjuytrtnujmnerbghnTYJWBTNHRNegtnm6INBEYnjmutyhbRYNRTUYNJwfynNUBY3vtw kmne5yUYK*O^&(P()-89oi6JTRER+_43tWEGTQWG{F}TRegRTHR423teh#$erth5Th 3th 3245btjy RTE% Yy3t4wdfg Q@VRT v3t Enuyj 4ENYJ MbertGVQWERgwvtBY&8mik %etR  v!@GTH Ne4btyjh mBWERG vqwre w3bthnh ebrtHqvtenhbyMJ ERth m%^JRTj 43=wt h3rh=- q3t)
+123801928wersdfkqwerjasfvioefsdxcvigwergjonuitergn89utiuieg89ui3t4hgnui vrwe i vu3 ot uio23f4uro3vnu14tb13^B!#%YHyhyTNUjuytrtnujmnerbghnTYJWBTNHRNegtnm6INBEYnjmutyhbRYNRTUYNJwfynNUBY3vtw kmne5yUYK*O^&(P()-89oi6JTRER+_43tWEGTQWG{F}TRegRTHR423teh#$erth5Th 3th 3245btjy RTE% Yy3t4wdfg Q@VRT v3t Enuyj 4ENYJ MbertGVQWERgwvtBY&8mik %etR  v!@GTH Ne4btyjh mBWERG vqwre w3bthnh ebrtHqvtenhbyMJ ERth m%^JRTj 43=wt h3rh=- q3t)
+123801928wersdfkqwerjasfvioefsdxcvigwergjonuitergn89utiuieg89ui3t4hgnui vrwe i vu3 ot uio23f4uro3vnu14tb13^B!#%YHyhyTNUjuytrtnujmnerbghnTYJWBTNHRNegtnm6INBEYnjmutyhbRYNRTUYNJwfynNUBY3vtw kmne5yUYK*O^&(P()-89oi6JTRER+_43tWEGTQWG{F}TRegRTHR423teh#$erth5Th 3th 3245btjy RTE% Yy3t4wdfg Q@VRT v3t Enuyj 4ENYJ MbertGVQWERgwvtBY&8mik %etR  v!@GTH Ne4btyjh mBWERG vqwre w3bthnh ebrtHqvtenhbyMJ ERth m%^JRTj 43=wt h3rh=- q3t)
+123801928wersdfkqwerjasfvioefsdxcvigwergjonuitergn89utiuieg89ui3t4hgnui vrwe i vu3 ot uio23f4uro3vnu14tb13^B!#%YHyhyTNUjuytrtnujmnerbghnTYJWBTNHRNegtnm6INBEYnjmutyhbRYNRTUYNJwfynNUBY3vtw kmne5yUYK*O^&(P()-89oi6JTRER+_43tWEGTQWG{F}TRegRTHR423teh#$erth5Th 3th 3245btjy RTE% Yy3t4wdfg Q@VRT v3t Enuyj 4ENYJ MbertGVQWERgwvtBY&8mik %etR  v!@GTH Ne4btyjh mBWERG vqwre w3bthnh ebrtHqvtenhbyMJ ERth m%^JRTj 43=wt h3rh=- q3t)
+Ctrl+V
+.....
+2773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721277346772127734677212773467721
+// 80971, that's enough.
+// now, good luck and enjoy my contest :)
